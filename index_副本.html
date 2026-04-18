@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <title>大地華文 Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1a1a;
+      display: flex; justify-content: center; align-items: center;
+      width: 100vw; height: 100vh; overflow: hidden;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+    #app {
+      position: relative;
+      width: min(100vw, 177.78vh);
+      height: min(56.25vw, 100vh);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .page { position: absolute; inset: 0; display: none; }
+    .page.active { display: block; }
+    .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      15%  { transform: translateX(-10px); }
+      30%  { transform: translateX(10px); }
+      45%  { transform: translateX(-7px); }
+      60%  { transform: translateX(7px); }
+      75%  { transform: translateX(-4px); }
+      90%  { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.5s ease !important; }
+
+    /* ── Nav buttons ─────────────────────────────────────── */
+    .nav-btn {
+      position: absolute; cursor: pointer; user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .nav-btn img { display: block; width: 100%; }
+    .nav-btn:hover  { transform: scale(1.08); }
+    .nav-btn:active { transform: scale(0.95); }
+    .nav-btn.disabled { opacity: 0.5; pointer-events: none; }
+    .nav-tl { left: 2.5%;  top: 3.5%; width: 4.5%; }
+    .nav-tr { right: 2.5%; top: 3.5%; width: 4.5%; }
+    .nav-bl { left: 2.5%;  bottom: 3.5%; width: 4.5%; }
+    .nav-br { right: 2.5%; bottom: 3.5%; width: 4.5%; }
+
+    /* ── Generic btn ─────────────────────────────────────── */
+    .btn {
+      position: absolute; cursor: pointer; user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .btn img { display: block; width: 100%; }
+    .btn:hover  { transform: scale(1.08); }
+    .btn:active { transform: scale(0.95); }
+
+    /* ── Tab panel – text buttons (pages 6-10) ───────────── */
+    .tab-panel {
+      position: absolute; right: 0.8%; top: 18%;
+      width: 10.5%; display: flex; flex-direction: column; gap: 0.8%;
+      z-index: 10;
+    }
+    .tab-btn {
+      width: 100%; padding: 8% 4%;
+      cursor: pointer; user-select: none;
+      border: none; outline: none; border-radius: 6px;
+      font-family: "Noto Sans TC", "PingFang TC", sans-serif;
+      font-weight: 700; font-size: 1.05vw;
+      text-align: center; line-height: 1.4; white-space: nowrap;
+      background: #F6F6F6; color: #525252;
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+    }
+    .tab-btn:active { transform: scale(0.97); }
+    /* Per-tab hover & active colors */
+    .tab-menuquestion:hover, .tab-menuquestion.tab-active { background: #E95F9D; color: #fff; }
+    .tab-knowimage:hover,    .tab-knowimage.tab-active    { background: #0054A5; color: #fff; }
+    .tab-write:hover,        .tab-write.tab-active        { background: #FF9F14; color: #fff; }
+    .tab-picbook:hover,      .tab-picbook.tab-active      { background: #59B666; color: #fff; }
+    .tab-game:hover,         .tab-game.tab-active         { background: #E95F9D; color: #fff; }
+
+    /* ── PAGE 1 ──────────────────────────────────────────── */
+    #p1-nihao { left: 61%; top: 16%; width: 22%; }
+
+    /* ── PAGE 2 – password ───────────────────────────────── */
+    #p2-input-wrap {
+      position: absolute; left: 28%; top: 20%; width: 37%;
+    }
+    #p2-input-wrap > img { display: block; width: 100%; }
+    #p2-real-input {
+      position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+      border: none; outline: none; background: transparent;
+      font-size: 2.2vw; color: #555; text-align: center;
+      font-family: inherit; letter-spacing: 0.3em; padding: 0 8%;
+    }
+    #p2-login-btn {
+      position: absolute; left: 67%; top: 20%; width: 8%;
+      cursor: pointer; user-select: none; transition: transform 0.15s ease;
+    }
+    #p2-login-btn img { display: block; width: 100%; }
+    #p2-login-btn:hover  { transform: scale(1.08); }
+    #p2-login-btn:active { transform: scale(0.95); }
+
+    /* ── PAGE 3 ──────────────────────────────────────────── */
+    .grade-card {
+      position: absolute; background: white; border-radius: 8%; overflow: hidden;
+      cursor: pointer; user-select: none; top: 14%; height: 70%;
+      transition: transform 0.15s ease;
+    }
+    .grade-card:hover  { transform: scale(1.05); }
+    .grade-card:active { transform: scale(0.97); }
+    .grade-card img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    #gc1 { left: 13%; width: 22%; }
+    #gc2 { left: 39%; width: 22%; }
+    #gc3 { left: 65%; width: 22%; }
+
+    /* ── PAGE 4 ──────────────────────────────────────────── */
+    .content-card {
+      position: absolute; background: white; border-radius: 8%; overflow: hidden;
+      cursor: pointer; user-select: none; top: 14%; height: 70%;
+      transition: transform 0.15s ease;
+    }
+    .content-card:hover  { transform: scale(1.05); }
+    .content-card:active { transform: scale(0.97); }
+    .content-card img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    #cc1 { left: 13%; width: 22%; }
+    #cc2 { left: 39%; width: 22%; }
+    #cc3 { left: 65%; width: 22%; }
+
+    /* ── PAGE 4-poet – local video ───────────────────────── */
+    #poet-video-wrap {
+      position: absolute; left: 15%; top: 13%; width: 70%; height: 76%;
+    }
+    #poet-video-wrap video {
+      width: 100%; height: 100%; object-fit: contain;
+      border-radius: 8px; background: #000;
+    }
+
+    /* ── PAGE 5 ──────────────────────────────────────────── */
+    .lesson-btn {
+      position: absolute; background: white; border-radius: 14%;
+      cursor: pointer; user-select: none;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    .lesson-btn:hover  { transform: scale(1.08); }
+    .lesson-btn:active { transform: scale(0.95); }
+    .lesson-btn img { width: 60%; height: auto; display: block; }
+
+    /* ── PAGE 6 – quiz, 4 cards centered ────────────────── */
+    .answer-card {
+      position: absolute; background: white; border-radius: 6%;
+      cursor: pointer; user-select: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      top: 36%; height: 47%;
+      transition: transform 0.15s ease; overflow: hidden;
+    }
+    .answer-card:hover  { transform: scale(1.05); }
+    .answer-card:active { transform: scale(0.95); }
+    .answer-card img { width: 65%; height: auto; display: block; }
+    #ac1 { left: 12%;  width: 16%; }
+    #ac2 { left: 30%;  width: 16%; }
+    #ac3 { left: 48%;  width: 16%; }
+    #ac4 { left: 66%;  width: 16%; }
+
+    /* ── PAGE 7 – 識圖, floating mouth ───────────────────── */
+    @keyframes float-mouth {
+      0%, 100% { transform: translateX(-50%) translateY(0px); }
+      50%       { transform: translateX(-50%) translateY(-12px); }
+    }
+    #p7-mouth {
+      position: absolute; left: 50%; top: 28%; width: 18%;
+      animation: float-mouth 2.4s ease-in-out infinite;
+    }
+    #p7-mouth img { display: block; width: 100%; }
+    #p7-card {
+      position: absolute; left: 50%; top: 57%; width: 25%;
+      transform: translateX(-50%);
+    }
+    #p7-card img { display: block; width: 100%; }
+    #p7-sound {
+      position: absolute; left: 63.5%; top: 61%; width: 5.5%;
+      cursor: pointer; user-select: none; transition: transform 0.15s ease;
+    }
+    #p7-sound img { display: block; width: 100%; }
+    #p7-sound:hover  { transform: scale(1.08); }
+    #p7-sound:active { transform: scale(0.95); }
+
+    /* ── PAGE 8 – 書寫練習 ────────────────────────────────── */
+    /* Text char selector buttons */
+    .char-btn-text {
+      position: absolute; cursor: pointer; user-select: none;
+      width: 8%; height: 11%;
+      background: #F6F6F6; color: #525252;
+      border: none; border-radius: 8px;
+      font-family: "Noto Sans TC", "PingFang TC", sans-serif;
+      font-weight: 700; font-size: 1.6vw;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+    }
+    .char-btn-text:hover  { transform: scale(1.05); }
+    .char-btn-text:active { transform: scale(0.95); }
+    .char-btn-text.pressed { background: #FF9F14; color: #fff; }
+
+    /* Reference frame (image_text.png + CSS character) */
+    #p8-text-frame {
+      position: absolute; left: 26%; top: 18%;
+      width: 26%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #p8-text-frame > .frame-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; pointer-events: none;
+    }
+    #p8-char-text {
+      position: relative; z-index: 1;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-weight: 600; color: #525252; line-height: 1;
+      user-select: none;
+      /* 0.75 × 26% of app width */
+      font-size: min(19.5vw, 34.7vh);
+    }
+
+    /* Square handwriting canvas (same size as frame) */
+    #p8-canvas-wrap {
+      position: absolute; left: 54%; top: 18%;
+      width: 26%; aspect-ratio: 1;
+      background: white; border-radius: 3%;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+    #write-canvas {
+      position: absolute; inset: 0; cursor: crosshair; touch-action: none;
+    }
+
+    /* Clear / Complete buttons */
+    .p8-action-btn {
+      position: absolute; cursor: pointer; user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .p8-action-btn img { display: block; width: 100%; }
+    .p8-action-btn:hover  { transform: scale(1.08); }
+    .p8-action-btn:active { transform: scale(0.95); }
+    #p8-btn-clear    { left: 54%; top: 68%; width: 12%; }
+    #p8-btn-complete { left: 68%; top: 68%; width: 12%; }
+
+    /* ── PAGE 9 – 故事繪本 (page-3 card style) ───────────── */
+    .picbook-card {
+      position: absolute; cursor: pointer; user-select: none;
+      top: 20%; height: 62%;
+      background: white; border-radius: 8%; overflow: hidden;
+      transition: transform 0.15s ease;
+    }
+    .picbook-card:hover  { transform: scale(1.05); }
+    .picbook-card:active { transform: scale(0.95); }
+    .picbook-card img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    #pb1 { left: 16%; width: 20%; }
+    #pb2 { left: 39%; width: 20%; }
+    #pb3 { left: 62%; width: 20%; }
+
+    /* ── PAGE 10 – matching activity ─────────────────────── */
+    .match-item {
+      position: absolute; background: transparent; cursor: pointer; user-select: none;
+      display: flex; align-items: center; justify-content: center;
+      width: 13%; height: 15%; transition: transform 0.15s ease;
+    }
+    .match-item:hover  { transform: scale(1.05); }
+    .match-item:active { transform: scale(0.97); }
+    .match-item img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .match-item.matched { pointer-events: none; }
+    #ml-hand  { left: 22%; top: 17%; }
+    #ml-mouth { left: 22%; top: 34%; }
+    #ml-eye   { left: 22%; top: 51%; }
+    #ml-ear   { left: 22%; top: 68%; }
+    #mr-mouth { left: 63%; top: 17%; }
+    #mr-ear   { left: 63%; top: 34%; }
+    #mr-hand  { left: 63%; top: 51%; }
+    #mr-eye   { left: 63%; top: 68%; }
+    .match-instruction {
+      position: absolute; left: 3.5%; top: 40%; width: 9%;
+      color: #bbb; font-size: 1.3vw; line-height: 1.75;
+    }
+    #match-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; overflow: visible;
+    }
+
+    /* ── Confetti ─────────────────────────────────────────── */
+    #confetti-canvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- PAGE 1 – Splash -->
+  <div id="page1" class="page active">
+    <img class="bg" src="page_BG/BG_1.png" alt="">
+    <img class="btn" id="p1-nihao" src="btn/1/btn_01.png" alt="" onclick="goTo(2)">
+  </div>
+
+  <!-- PAGE 2 – Password -->
+  <div id="page2" class="page">
+    <img class="bg" src="page_BG/BG_2.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_preview_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_green.png" alt="">
+    </div>
+    <div id="p2-input-wrap">
+      <img src="btn/2/input_code.png" alt="">
+      <input id="p2-real-input" type="password" maxlength="20" autocomplete="off">
+    </div>
+    <div id="p2-login-btn" onclick="checkPassword()">
+      <img src="btn/2/btn_login.png" alt="">
+    </div>
+  </div>
+
+  <!-- PAGE 3 – Grade selection -->
+  <div id="page3" class="page">
+    <img class="bg" src="page_BG/BG_3.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(2)">
+      <img src="btn/btn_all/btn_preview_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_green.png" alt="">
+    </div>
+    <div class="grade-card" id="gc1" onclick="goTo(4)"><img src="btn/3/btn_1.png" alt="幼兒園"></div>
+    <div class="grade-card" id="gc2" onclick="goTo(4)"><img src="btn/3/btn_2.png" alt="小學"></div>
+    <div class="grade-card" id="gc3" onclick="goTo(4)"><img src="btn/3/btn_3.png" alt="中學"></div>
+  </div>
+
+  <!-- PAGE 4 – Content type -->
+  <div id="page4" class="page">
+    <img class="bg" src="page_BG/BG_4.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(3)">
+      <img src="btn/btn_all/btn_preview_yellow.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_yellow.png" alt="">
+    </div>
+    <div class="content-card" id="cc1" onclick="goTo(5)"><img src="btn/4/btn_1.png" alt="課件"></div>
+    <div class="content-card" id="cc2" onclick="goTo('poet')"><img src="btn/4/btn_2.png" alt="唐詩"></div>
+    <div class="content-card" id="cc3" onclick="goTo(5)"><img src="btn/4/btn_3.png" alt="兒歌"></div>
+  </div>
+
+  <!-- PAGE 4-poet – Local video -->
+  <div id="page-poet" class="page">
+    <img class="bg" src="page_BG/BG_4_poet.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(4)">
+      <img src="btn/btn_all/btn_preview_yellow.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_yellow.png" alt="">
+    </div>
+    <div id="poet-video-wrap">
+      <video id="poet-video" controls>
+        <source src="video/靜夜思.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- PAGE 5 – Lesson selection -->
+  <div id="page5" class="page">
+    <img class="bg" src="page_BG/BG_5.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(4)">
+      <img src="btn/btn_all/btn_preview_yellow.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_yellow.png" alt="">
+    </div>
+    <div id="lesson-grid"></div>
+  </div>
+
+  <!-- PAGE 6 – 課前提問 -->
+  <div id="page6" class="page">
+    <img class="bg" src="page_BG/BG_6.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(5)">
+      <img src="btn/btn_all/btn_preview_pink.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_pink.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_pink.png" alt=""></div>
+    <div class="nav-btn nav-br"><img src="btn/btn_all/btn_next_str_pink.png" alt=""></div>
+    <div class="answer-card" id="ac1" onclick="checkAnswer(this,'mouth')"><img src="btn/6/btn_mouth.png" alt="嘴巴"></div>
+    <div class="answer-card" id="ac2" onclick="checkAnswer(this,'hand')"><img src="btn/6/btn_hand.png" alt="手"></div>
+    <div class="answer-card" id="ac3" onclick="checkAnswer(this,'eye')"><img src="btn/6/btn_eye.png" alt="眼睛"></div>
+    <div class="answer-card" id="ac4" onclick="checkAnswer(this,'ear')"><img src="btn/6/btn_ear.png" alt="耳朵"></div>
+    <div class="tab-panel">
+      <button class="tab-btn tab-menuquestion tab-active">課前提問</button>
+      <button class="tab-btn tab-knowimage"  onclick="goTo(7)">識圖</button>
+      <button class="tab-btn tab-write"      onclick="goTo(8)">書寫練習</button>
+      <button class="tab-btn tab-picbook"    onclick="goTo(9)">故事繪本</button>
+      <button class="tab-btn tab-game"       onclick="goTo(10)">遊戲活動</button>
+    </div>
+  </div>
+
+  <!-- PAGE 7 – 識圖 -->
+  <div id="page7" class="page">
+    <img class="bg" src="page_BG/BG_7.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(5)">
+      <img src="btn/btn_all/btn_preview_darkblue.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_darkblue.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_darkblue.png" alt=""></div>
+    <div class="nav-btn nav-br"><img src="btn/btn_all/btn_next_str_darkblue.png" alt=""></div>
+    <div id="p7-mouth"><img src="image/7/image_mouth.png" alt="嘴巴"></div>
+    <div id="p7-card"><img src="image/7/card_mouth.png" alt="嘴巴卡片"></div>
+    <div id="p7-sound" onclick="playSound('sound/knowimage/嘴巴.MP3')">
+      <img src="btn/7/btn_sound.png" alt="">
+    </div>
+    <div class="tab-panel">
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
+      <button class="tab-btn tab-knowimage tab-active">識圖</button>
+      <button class="tab-btn tab-write"     onclick="goTo(8)">書寫練習</button>
+      <button class="tab-btn tab-picbook"   onclick="goTo(9)">故事繪本</button>
+      <button class="tab-btn tab-game"      onclick="goTo(10)">遊戲活動</button>
+    </div>
+  </div>
+
+  <!-- PAGE 8 – 書寫練習 -->
+  <div id="page8" class="page">
+    <img class="bg" src="page_BG/BG_8.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(5)">
+      <img src="btn/btn_all/btn_preview_yellow.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_yellow.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_yellow.png" alt=""></div>
+    <div class="nav-btn nav-br"><img src="btn/btn_all/btn_next_str_yellow.png" alt=""></div>
+    <!-- Char selector (2 cols × 4 rows) -->
+    <button class="char-btn-text pressed" style="left:6%;top:18%;"  id="cbtn-head"  onclick="selectChar('head',this)">頭</button>
+    <button class="char-btn-text"         style="left:15%;top:18%;" id="cbtn-ear"   onclick="selectChar('ear',this)">耳</button>
+    <button class="char-btn-text"         style="left:6%;top:31%;"  id="cbtn-foot"  onclick="selectChar('foot',this)">腳</button>
+    <button class="char-btn-text"         style="left:15%;top:31%;" id="cbtn-nose"  onclick="selectChar('nose',this)">鼻</button>
+    <button class="char-btn-text"         style="left:6%;top:44%;"  id="cbtn-eye"   onclick="selectChar('eye',this)">眼</button>
+    <button class="char-btn-text"         style="left:15%;top:44%;" id="cbtn-mouth" onclick="selectChar('mouth',this)">口</button>
+    <button class="char-btn-text"         style="left:6%;top:57%;"  id="cbtn-hand"  onclick="selectChar('hand',this)">手</button>
+    <!-- Reference frame: image_text.png + CSS character -->
+    <div id="p8-text-frame">
+      <img class="frame-img" src="image/8/image_text.png" alt="">
+      <span id="p8-char-text">頭</span>
+    </div>
+    <!-- Square handwriting canvas -->
+    <div id="p8-canvas-wrap">
+      <canvas id="write-canvas"></canvas>
+    </div>
+    <!-- Action buttons -->
+    <div id="p8-btn-clear"    class="p8-action-btn" onclick="clearCanvas()"><img src="btn/8/btn_clear.png" alt="清除"></div>
+    <div id="p8-btn-complete" class="p8-action-btn" onclick="launchConfetti()"><img src="btn/8/btn_complete.png" alt="完成"></div>
+    <div class="tab-panel">
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
+      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">識圖</button>
+      <button class="tab-btn tab-write tab-active">書寫練習</button>
+      <button class="tab-btn tab-picbook" onclick="goTo(9)">故事繪本</button>
+      <button class="tab-btn tab-game"    onclick="goTo(10)">遊戲活動</button>
+    </div>
+  </div>
+
+  <!-- PAGE 9 – 故事繪本 -->
+  <div id="page9" class="page">
+    <img class="bg" src="page_BG/BG_9.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(5)">
+      <img src="btn/btn_all/btn_preview_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_green.png" alt=""></div>
+    <div class="nav-btn nav-br"><img src="btn/btn_all/btn_next_str_green.png" alt=""></div>
+    <div class="picbook-card" id="pb1"><img src="btn/9/card_body.png"  alt=""></div>
+    <div class="picbook-card" id="pb2"><img src="btn/9/card_eye.png"   alt=""></div>
+    <div class="picbook-card" id="pb3"><img src="btn/9/card_hands.png" alt=""></div>
+    <div class="tab-panel">
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
+      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">識圖</button>
+      <button class="tab-btn tab-write"        onclick="goTo(8)">書寫練習</button>
+      <button class="tab-btn tab-picbook tab-active">故事繪本</button>
+      <button class="tab-btn tab-game" onclick="goTo(10)">遊戲活動</button>
+    </div>
+  </div>
+
+  <!-- PAGE 10 – 遊戲活動 (matching) -->
+  <div id="page10" class="page">
+    <img class="bg" src="page_BG/BG_10.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(5)">
+      <img src="btn/btn_all/btn_preview_pink.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_pink.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_pink.png" alt=""></div>
+    <div class="nav-btn nav-br disabled"><img src="btn/btn_all/btn_next_str_pink.png" alt=""></div>
+    <p class="match-instruction">點擊左邊圖片，<br>再點擊右邊文字<br>來配對！</p>
+    <div class="match-item" id="ml-hand"  onclick="selectLeft(this,'hand')"><img  id="ml-hand-img"  src="btn/10/image_hand.png"  alt="手"></div>
+    <div class="match-item" id="ml-mouth" onclick="selectLeft(this,'mouth')"><img id="ml-mouth-img" src="btn/10/image_mouth.png" alt="嘴巴"></div>
+    <div class="match-item" id="ml-eye"   onclick="selectLeft(this,'eye')"><img   id="ml-eye-img"   src="btn/10/image_eye.png"   alt="眼睛"></div>
+    <div class="match-item" id="ml-ear"   onclick="selectLeft(this,'ear')"><img   id="ml-ear-img"   src="btn/10/image_ear.png"   alt="耳朵"></div>
+    <div class="match-item" id="mr-mouth" onclick="selectRight(this,'mouth')"><img id="mr-mouth-img" src="btn/10/text_mouth.png" alt="嘴巴"></div>
+    <div class="match-item" id="mr-ear"   onclick="selectRight(this,'ear')"><img   id="mr-ear-img"   src="btn/10/text_ear.png"   alt="耳朵"></div>
+    <div class="match-item" id="mr-hand"  onclick="selectRight(this,'hand')"><img  id="mr-hand-img"  src="btn/10/text_hand.png"  alt="手"></div>
+    <div class="match-item" id="mr-eye"   onclick="selectRight(this,'eye')"><img   id="mr-eye-img"   src="btn/10/text_eye.png"   alt="眼睛"></div>
+    <svg id="match-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="tab-panel">
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
+      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">識圖</button>
+      <button class="tab-btn tab-write"        onclick="goTo(8)">書寫練習</button>
+      <button class="tab-btn tab-picbook"      onclick="goTo(9)">故事繪本</button>
+      <button class="tab-btn tab-game tab-active">遊戲活動</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+// ── Navigation ────────────────────────────────────────────
+function goTo(n) {
+  // Pause video when leaving poet page
+  const active = document.querySelector('.page.active');
+  if (active && active.id === 'page-poet') {
+    const v = document.getElementById('poet-video');
+    if (v) v.pause();
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const id = typeof n === 'number' ? 'page' + n : 'page-' + n;
+  document.getElementById(id).classList.add('active');
+  if (n === 10) resetMatching();
+  if (n === 8)  initCanvasOnce();
+}
+
+// ── Shake ─────────────────────────────────────────────────
+function shake(el) {
+  el.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('shake');
+  el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
+}
+
+// ── Confetti ──────────────────────────────────────────────
+let _confettiRaf;
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const COLORS = ['#E85F9D','#FFD700','#5AC85A','#4A90D9','#FF6B35','#A855F7','#22D3EE','#F97316'];
+  const pieces = Array.from({ length: 230 }, () => ({
+    x: Math.random() * canvas.width, y: -15 - Math.random() * 280,
+    w: 7 + Math.random() * 9,        h: 4 + Math.random() * 7,
+    vx: (Math.random() - 0.5) * 3,   vy: 0.6 + Math.random() * 1.4,
+    angle: Math.random() * 360,       spin: (Math.random() - 0.5) * 5,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)]
+  }));
+  cancelAnimationFrame(_confettiRaf);
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    for (const p of pieces) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.angle += p.spin;
+      if (p.y < canvas.height + 30) alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    if (alive) _confettiRaf = requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+// ── Page 2 – Password ─────────────────────────────────────
+function checkPassword() {
+  const input = document.getElementById('p2-real-input');
+  if (input.value === '1234') {
+    input.value = '';
+    goTo(3);
+  } else {
+    shake(document.getElementById('p2-input-wrap'));
+    input.value = '';
+  }
+}
+document.getElementById('p2-real-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+// ── Page 5 – Lesson grid ──────────────────────────────────
+(function buildGrid() {
+  const grid = document.getElementById('lesson-grid');
+  const BW = 7.8, BH = 13, GX = 2.0, GY = 2.2;
+  const LX = 15.0, RX = 55.5, Y0 = 21.5;
+  function makeBtn(n, lx, ly) {
+    const div = document.createElement('div');
+    div.className = 'lesson-btn';
+    div.style.cssText = `left:${lx}%;top:${ly}%;width:${BW}%;height:${BH}%;`;
+    div.addEventListener('click', () => goTo(6));
+    const img = document.createElement('img');
+    img.src = `btn/5/${n}.png`;
+    img.alt = String(n);
+    div.appendChild(img);
+    grid.appendChild(div);
+  }
+  let n = 1;
+  for (let row = 0; row < 4; row++) {
+    const cols = row < 3 ? 3 : 1;
+    for (let col = 0; col < cols; col++) makeBtn(n++, LX + col*(BW+GX), Y0 + row*(BH+GY));
+  }
+  n = 11;
+  for (let row = 0; row < 4; row++) {
+    const cols = row < 3 ? 3 : 2;
+    for (let col = 0; col < cols; col++) makeBtn(n++, RX + col*(BW+GX), Y0 + row*(BH+GY));
+  }
+})();
+
+// ── Page 6 – Quiz ─────────────────────────────────────────
+function checkAnswer(el, answer) {
+  if (answer === 'ear') launchConfetti();
+  else shake(el);
+}
+
+// ── Page 7 – Sound ────────────────────────────────────────
+function playSound(src) {
+  new Audio(src).play();
+}
+
+// ── Page 8 – Char selector ────────────────────────────────
+const _charKeys = ['head','ear','foot','nose','eye','mouth','hand'];
+const _charChars = { head:'頭', ear:'耳', foot:'腳', nose:'鼻', eye:'眼', mouth:'口', hand:'手' };
+
+function selectChar(id, el) {
+  clearCanvas();  // clear drawing when switching character
+  _charKeys.forEach(c => {
+    const btn = document.getElementById('cbtn-' + c);
+    if (btn) btn.classList.toggle('pressed', c === id);
+  });
+  document.getElementById('p8-char-text').textContent = _charChars[id];
+}
+
+// ── Page 8 – Canvas handwriting ───────────────────────────
+let _canvasInited = false;
+function initCanvasOnce() {
+  if (_canvasInited) return;
+  _canvasInited = true;
+
+  const wrap   = document.getElementById('p8-canvas-wrap');
+  const canvas = document.getElementById('write-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    const w = wrap.offsetWidth  || 400;
+    const h = wrap.offsetHeight || 400;
+    canvas.width  = w;
+    canvas.height = h;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+  }
+  resize();
+
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth   = 4;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  let drawing = false, lx = 0, ly = 0;
+
+  function getPos(e) {
+    const r  = canvas.getBoundingClientRect();
+    const sx = canvas.width  / r.width;
+    const sy = canvas.height / r.height;
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * sx, y: (src.clientY - r.top) * sy };
+  }
+  function startDraw(e) {
+    drawing = true;
+    const p = getPos(e); lx = p.x; ly = p.y;
+    ctx.beginPath(); ctx.arc(lx, ly, 2, 0, Math.PI * 2); ctx.fill();
+  }
+  function moveDraw(e) {
+    if (!drawing) return;
+    const p = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+    lx = p.x; ly = p.y;
+  }
+  function endDraw() { drawing = false; }
+
+  canvas.addEventListener('mousedown',  startDraw);
+  canvas.addEventListener('mousemove',  moveDraw);
+  canvas.addEventListener('mouseup',    endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); startDraw(e); }, { passive: false });
+  canvas.addEventListener('touchmove',  e => { e.preventDefault(); moveDraw(e);  }, { passive: false });
+  canvas.addEventListener('touchend',   endDraw);
+}
+
+function clearCanvas() {
+  const canvas = document.getElementById('write-canvas');
+  if (!canvas) return;
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ── Page 10 – Matching ────────────────────────────────────
+let _selLeft = null;
+const _matched = new Set();
+
+function leftPressedSrc(id) {
+  return id === 'mouth'
+    ? 'btn/10/image_mouth__pressed.png'
+    : `btn/10/image_${id}_pressed.png`;
+}
+
+function resetMatching() {
+  _selLeft = null;
+  _matched.clear();
+  document.getElementById('match-svg').innerHTML = '';
+  ['hand','mouth','eye','ear'].forEach(id => {
+    const lEl = document.getElementById('ml-' + id);
+    const rEl = document.getElementById('mr-' + id);
+    lEl.classList.remove('matched'); rEl.classList.remove('matched');
+    lEl.style.pointerEvents = '';    rEl.style.pointerEvents = '';
+    document.getElementById('ml-' + id + '-img').src = `btn/10/image_${id}.png`;
+    document.getElementById('mr-' + id + '-img').src = `btn/10/text_${id}.png`;
+  });
+}
+
+function selectLeft(el, id) {
+  if (_matched.has(id)) return;
+  if (_selLeft && _selLeft !== id)
+    document.getElementById('ml-' + _selLeft + '-img').src = `btn/10/image_${_selLeft}.png`;
+  _selLeft = id;
+  document.getElementById('ml-' + id + '-img').src = leftPressedSrc(id);
+}
+
+function selectRight(el, id) {
+  if (!_selLeft || _matched.has(id)) return;
+  if (_selLeft === id) {
+    const lEl = document.getElementById('ml-' + _selLeft);
+    const rEl = document.getElementById('mr-' + id);
+    document.getElementById('mr-' + id + '-img').src = `btn/10/text_${id}_pressed.png`;
+    lEl.classList.add('matched'); rEl.classList.add('matched');
+    lEl.style.pointerEvents = 'none'; rEl.style.pointerEvents = 'none';
+    drawMatchLine(lEl, rEl);
+    _matched.add(id); _selLeft = null;
+    if (_matched.size === 4) setTimeout(launchConfetti, 350);
+  } else {
+    const lEl = document.getElementById('ml-' + _selLeft);
+    shake(lEl); shake(el);
+    document.getElementById('ml-' + _selLeft + '-img').src = `btn/10/image_${_selLeft}.png`;
+    _selLeft = null;
+  }
+}
+
+function drawMatchLine(lEl, rEl) {
+  const svg = document.getElementById('match-svg');
+  const app = document.getElementById('app').getBoundingClientRect();
+  const l   = lEl.getBoundingClientRect();
+  const r   = rEl.getBoundingClientRect();
+  svg.setAttribute('viewBox', `0 0 ${app.width} ${app.height}`);
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', l.right  - app.left);
+  line.setAttribute('y1', (l.top + l.bottom) / 2 - app.top);
+  line.setAttribute('x2', r.left   - app.left);
+  line.setAttribute('y2', (r.top + r.bottom) / 2 - app.top);
+  line.setAttribute('stroke', '#E85F9D');
+  line.setAttribute('stroke-width', '4');
+  line.setAttribute('vector-effect', 'non-scaling-stroke');
+  line.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(line);
+}
+</script>
+</body>
+</html>
