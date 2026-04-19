@@ -130,6 +130,15 @@
     #cc2 { left: 39%; width: 22%; }
     #cc3 { left: 65%; width: 22%; }
 
+    /* ── PAGE 4-poet-menu ────────────────────────────────── */
+    .poet-menu-btn {
+      position: absolute; cursor: pointer; user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .poet-menu-btn img { display: block; width: 100%; }
+    .poet-menu-btn:hover  { transform: scale(1.05); }
+    .poet-menu-btn:active { transform: scale(0.97); }
+
     /* ── PAGE 4-poet – local video ───────────────────────── */
     #poet-video-wrap {
       position: absolute; left: 15%; top: 13%; width: 70%; height: 76%;
@@ -150,6 +159,61 @@
     .lesson-btn:active { transform: scale(0.95); }
     .lesson-btn img { width: 60%; height: auto; display: block; }
 
+    /* ── PAGE 6b – body-part annotation ─────────────────── */
+    .p6b-part-btn {
+      position: absolute; cursor: pointer; user-select: none;
+      width: 11%; height: 9%;
+      background: white; color: #525252;
+      border: none; border-radius: 8px;
+      font-family: "Noto Sans TC", "PingFang TC", sans-serif;
+      font-weight: 700; font-size: 1.3vw;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+    }
+    .p6b-part-btn:hover  { transform: scale(1.05); }
+    .p6b-part-btn:active { transform: scale(0.95); }
+    .p6b-part-btn.p6b-active { background: #E95F9D; color: #fff; }
+
+    #p6b-title {
+      position: absolute; left: 25%; width: 48%;
+      top: 17%; text-align: center;
+      font-size: min(2.4vw, 4.3vh);
+      font-weight: 700; color: #E95F9D;
+      user-select: none;
+    }
+    #p6b-photo-wrap {
+      position: absolute; left: 25%; top: 24%;
+      width: 48%; aspect-ratio: 6000 / 4029;
+    }
+    #p6b-photo {
+      display: block; width: 100%; height: 100%; object-fit: contain;
+    }
+    #p6b-svg {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; overflow: visible;
+    }
+    #p6b-answer-btn {
+      position: absolute; cursor: pointer; user-select: none;
+      width: 5.5%; left: 75%; top: 75%;
+      transition: transform 0.15s ease;
+    }
+    #p6b-answer-btn img { display: block; width: 100%; }
+    #p6b-answer-btn:hover  { transform: scale(1.1); }
+    #p6b-answer-btn:active { transform: scale(0.93); }
+
+    /* Dot pagination */
+    .page-dots {
+      position: absolute; bottom: 7%; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 1.2%; align-items: center;
+    }
+    .page-dot {
+      width: 1.4%; aspect-ratio: 1; border-radius: 50%;
+      background: #ddd;
+    }
+    .page-dot.dot-active { background: #E95F9D; }
+
     /* ── PAGE 6 – quiz, 4 cards centered ────────────────── */
     .answer-card {
       position: absolute; background: white; border-radius: 6%;
@@ -166,7 +230,7 @@
     #ac3 { left: 48%;  width: 16%; }
     #ac4 { left: 66%;  width: 16%; }
 
-    /* ── PAGE 7 – 識圖, floating mouth ───────────────────── */
+    /* ── PAGE 7 – 👀識圖, floating mouth ───────────────────── */
     @keyframes float-mouth {
       0%, 100% { transform: translateX(-50%) translateY(0px); }
       50%       { transform: translateX(-50%) translateY(-12px); }
@@ -189,7 +253,21 @@
     #p7-sound:hover  { transform: scale(1.08); }
     #p7-sound:active { transform: scale(0.95); }
 
-    /* ── PAGE 8 – 書寫練習 ────────────────────────────────── */
+    /* ── PAGE 8 – gif overlay ───────────────────────────── */
+    #p8-gif-overlay {
+      display: none; position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: contain;
+      z-index: 2; pointer-events: none;
+    }
+    #p8-btn-gif {
+      position: absolute; left: 26%; top: 66%; width: 6%;
+      cursor: pointer; user-select: none; transition: transform 0.15s ease;
+    }
+    #p8-btn-gif img { display: block; width: 100%; }
+    #p8-btn-gif:hover  { transform: scale(1.1); }
+    #p8-btn-gif:active { transform: scale(0.93); }
+
+    /* ── PAGE 8 – ✏️書寫練習 ────────────────────────────────── */
     /* Text char selector buttons */
     .char-btn-text {
       position: absolute; cursor: pointer; user-select: none;
@@ -247,7 +325,15 @@
     #p8-btn-clear    { left: 54%; top: 68%; width: 12%; }
     #p8-btn-complete { left: 68%; top: 68%; width: 12%; }
 
-    /* ── PAGE 9 – 故事繪本 (page-3 card style) ───────────── */
+    /* ── PAGE 9 sub-pages ────────────────────────────────── */
+    .p9sub-img {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 55%; max-height: 72%;
+      object-fit: contain; display: block;
+    }
+
+    /* ── PAGE 9 – 📚故事繪本 (page-3 card style) ───────────── */
     .picbook-card {
       position: absolute; cursor: pointer; user-select: none;
       top: 20%; height: 62%;
@@ -346,14 +432,40 @@
       <img src="btn/btn_all/btn_hua_yellow.png" alt="">
     </div>
     <div class="content-card" id="cc1" onclick="goTo(5)"><img src="btn/4/btn_1.png" alt="課件"></div>
-    <div class="content-card" id="cc2" onclick="goTo('poet')"><img src="btn/4/btn_2.png" alt="唐詩"></div>
+    <div class="content-card" id="cc2" onclick="goTo('poet-menu')"><img src="btn/4/btn_2.png" alt="唐詩"></div>
     <div class="content-card" id="cc3" onclick="goTo(5)"><img src="btn/4/btn_3.png" alt="兒歌"></div>
+  </div>
+
+  <!-- PAGE 4-poet-menu – Poem selection -->
+  <div id="page-poet-menu" class="page">
+    <img class="bg" src="page_BG/BG_4.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(4)">
+      <img src="btn/btn_all/btn_preview_yellow.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_yellow.png" alt="">
+    </div>
+    <!-- Row 1 -->
+    <div class="poet-menu-btn" style="left:7%;top:24%;width:20%;" onclick="goTo('poet')"><img src="btn/4/1.png" alt="靜夜思"></div>
+    <div class="poet-menu-btn" style="left:29%;top:24%;width:20%;" onclick="goTo('poet')"><img src="btn/4/2.png" alt="春曉"></div>
+    <div class="poet-menu-btn" style="left:51%;top:24%;width:20%;" onclick="goTo('poet')"><img src="btn/4/3.png" alt="詠鵝"></div>
+    <div class="poet-menu-btn" style="left:73%;top:24%;width:20%;" onclick="goTo('poet')"><img src="btn/4/4.png" alt="憫農"></div>
+    <!-- Row 2 -->
+    <div class="poet-menu-btn" style="left:7%;top:43%;width:20%;" onclick="goTo('poet')"><img src="btn/4/5.png" alt="登鶴雀樓"></div>
+    <div class="poet-menu-btn" style="left:29%;top:43%;width:20%;" onclick="goTo('poet')"><img src="btn/4/6.png" alt="江雪"></div>
+    <div class="poet-menu-btn" style="left:51%;top:43%;width:20%;" onclick="goTo('poet')"><img src="btn/4/7.png" alt="問劉十九"></div>
+    <div class="poet-menu-btn" style="left:73%;top:43%;width:20%;" onclick="goTo('poet')"><img src="btn/4/8.png" alt="暮江吟"></div>
+    <!-- Row 3 -->
+    <div class="poet-menu-btn" style="left:7%;top:62%;width:20%;" onclick="goTo('poet')"><img src="btn/4/9.png" alt="望廬山瀑布"></div>
+    <div class="poet-menu-btn" style="left:29%;top:62%;width:20%;" onclick="goTo('poet')"><img src="btn/4/10.png" alt="早發白帝城"></div>
+    <div class="poet-menu-btn" style="left:51%;top:62%;width:20%;" onclick="goTo('poet')"><img src="btn/4/11.png" alt="黃鶴樓"></div>
+    <div class="poet-menu-btn" style="left:73%;top:62%;width:20%;" onclick="goTo('poet')"><img src="btn/4/12.png" alt="山居秋暝"></div>
   </div>
 
   <!-- PAGE 4-poet – Local video -->
   <div id="page-poet" class="page">
-    <img class="bg" src="page_BG/BG_4_poet.png" alt="">
-    <div class="nav-btn nav-tl" onclick="goTo(4)">
+    <img class="bg" src="page_BG/BG_4.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo('poet-menu')">
       <img src="btn/btn_all/btn_preview_yellow.png" alt="">
     </div>
     <div class="nav-btn nav-tr" onclick="goTo(1)">
@@ -378,7 +490,7 @@
     <div id="lesson-grid"></div>
   </div>
 
-  <!-- PAGE 6 – 課前提問 -->
+  <!-- PAGE 6 – ❓課前提問 -->
   <div id="page6" class="page">
     <img class="bg" src="page_BG/BG_6.png" alt="">
     <div class="nav-btn nav-tl" onclick="goTo(5)">
@@ -387,22 +499,66 @@
     <div class="nav-btn nav-tr" onclick="goTo(1)">
       <img src="btn/btn_all/btn_hua_pink.png" alt="">
     </div>
-    <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_pink.png" alt=""></div>
-    <div class="nav-btn nav-br"><img src="btn/btn_all/btn_next_str_pink.png" alt=""></div>
+    <div class="nav-btn nav-bl disabled"><img src="btn/btn_all/btn_preview_str_pink.png" alt=""></div>
+    <div class="nav-btn nav-br" onclick="goTo('6b')"><img src="btn/btn_all/btn_next_str_pink.png" alt=""></div>
     <div class="answer-card" id="ac1" onclick="checkAnswer(this,'mouth')"><img src="btn/6/btn_mouth.png" alt="嘴巴"></div>
     <div class="answer-card" id="ac2" onclick="checkAnswer(this,'hand')"><img src="btn/6/btn_hand.png" alt="手"></div>
     <div class="answer-card" id="ac3" onclick="checkAnswer(this,'eye')"><img src="btn/6/btn_eye.png" alt="眼睛"></div>
     <div class="answer-card" id="ac4" onclick="checkAnswer(this,'ear')"><img src="btn/6/btn_ear.png" alt="耳朵"></div>
     <div class="tab-panel">
-      <button class="tab-btn tab-menuquestion tab-active">課前提問</button>
-      <button class="tab-btn tab-knowimage"  onclick="goTo(7)">識圖</button>
-      <button class="tab-btn tab-write"      onclick="goTo(8)">書寫練習</button>
-      <button class="tab-btn tab-picbook"    onclick="goTo(9)">故事繪本</button>
-      <button class="tab-btn tab-game"       onclick="goTo(10)">遊戲活動</button>
+      <button class="tab-btn tab-menuquestion tab-active">❓課前提問</button>
+      <button class="tab-btn tab-knowimage"  onclick="goTo(7)">👀識圖</button>
+      <button class="tab-btn tab-write"      onclick="goTo(8)">✏️書寫練習</button>
+      <button class="tab-btn tab-picbook"    onclick="goTo(9)">📚故事繪本</button>
+      <button class="tab-btn tab-game"       onclick="goTo(10)">🎮遊戲活動</button>
+    </div>
+    <div class="page-dots">
+      <div class="page-dot dot-active"></div>
+      <div class="page-dot"></div>
     </div>
   </div>
 
-  <!-- PAGE 7 – 識圖 -->
+  <!-- PAGE 6b – ❓識圖 body annotation -->
+  <div id="page-6b" class="page">
+    <img class="bg" src="page_BG/BG_6_Q.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(5)">
+      <img src="btn/btn_all/btn_preview_pink.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_pink.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl" onclick="goTo(6)"><img src="btn/btn_all/btn_preview_str_pink.png" alt=""></div>
+    <div class="nav-btn nav-br disabled"><img src="btn/btn_all/btn_next_str_pink.png" alt=""></div>
+    <div id="p6b-title">眉毛在那裡？</div>
+    <!-- Body part selector buttons -->
+    <button class="p6b-part-btn p6b-active" style="left:10%;top:24%;" onclick="selectP6bPart('眉毛',this)">眉毛</button>
+    <button class="p6b-part-btn"            style="left:10%;top:35%;" onclick="selectP6bPart('眼睛',this)">眼睛</button>
+    <button class="p6b-part-btn"            style="left:10%;top:46%;" onclick="selectP6bPart('鼻子',this)">鼻子</button>
+    <button class="p6b-part-btn"            style="left:10%;top:57%;" onclick="selectP6bPart('耳朵',this)">耳朵</button>
+    <button class="p6b-part-btn"            style="left:10%;top:68%;" onclick="selectP6bPart('嘴巴',this)">嘴巴</button>
+    <!-- Photo with SVG overlay -->
+    <div id="p6b-photo-wrap">
+      <img id="p6b-photo" src="image/6/image_6.jpg" alt="">
+      <svg id="p6b-svg" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <!-- Show answer button (bottom-right of photo) -->
+    <div id="p6b-answer-btn" onclick="toggleP6bAnswer()">
+      <img id="p6b-answer-img" src="btn/6/btn_answer.png" alt="">
+    </div>
+    <div class="tab-panel">
+      <button class="tab-btn tab-menuquestion tab-active">❓課前提問</button>
+      <button class="tab-btn tab-knowimage"  onclick="goTo(7)">👀識圖</button>
+      <button class="tab-btn tab-write"      onclick="goTo(8)">✏️書寫練習</button>
+      <button class="tab-btn tab-picbook"    onclick="goTo(9)">📚故事繪本</button>
+      <button class="tab-btn tab-game"       onclick="goTo(10)">🎮遊戲活動</button>
+    </div>
+    <div class="page-dots">
+      <div class="page-dot"></div>
+      <div class="page-dot dot-active"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 7 – 👀識圖 -->
   <div id="page7" class="page">
     <img class="bg" src="page_BG/BG_7.png" alt="">
     <div class="nav-btn nav-tl" onclick="goTo(5)">
@@ -419,15 +575,15 @@
       <img src="btn/7/btn_sound.png" alt="">
     </div>
     <div class="tab-panel">
-      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
-      <button class="tab-btn tab-knowimage tab-active">識圖</button>
-      <button class="tab-btn tab-write"     onclick="goTo(8)">書寫練習</button>
-      <button class="tab-btn tab-picbook"   onclick="goTo(9)">故事繪本</button>
-      <button class="tab-btn tab-game"      onclick="goTo(10)">遊戲活動</button>
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">❓課前提問</button>
+      <button class="tab-btn tab-knowimage tab-active">👀識圖</button>
+      <button class="tab-btn tab-write"     onclick="goTo(8)">✏️書寫練習</button>
+      <button class="tab-btn tab-picbook"   onclick="goTo(9)">📚故事繪本</button>
+      <button class="tab-btn tab-game"      onclick="goTo(10)">🎮遊戲活動</button>
     </div>
   </div>
 
-  <!-- PAGE 8 – 書寫練習 -->
+  <!-- PAGE 8 – ✏️書寫練習 -->
   <div id="page8" class="page">
     <img class="bg" src="page_BG/BG_8.png" alt="">
     <div class="nav-btn nav-tl" onclick="goTo(5)">
@@ -446,10 +602,15 @@
     <button class="char-btn-text"         style="left:6%;top:44%;"  id="cbtn-eye"   onclick="selectChar('eye',this)">眼</button>
     <button class="char-btn-text"         style="left:15%;top:44%;" id="cbtn-mouth" onclick="selectChar('mouth',this)">口</button>
     <button class="char-btn-text"         style="left:6%;top:57%;"  id="cbtn-hand"  onclick="selectChar('hand',this)">手</button>
-    <!-- Reference frame: image_text.png + CSS character -->
+    <!-- Reference frame: image_text.png + CSS character + gif overlay -->
     <div id="p8-text-frame">
       <img class="frame-img" src="image/8/image_text.png" alt="">
       <span id="p8-char-text">頭</span>
+      <img id="p8-gif-overlay" src="image/8/gif_head.gif" alt="">
+    </div>
+    <!-- GIF toggle button -->
+    <div id="p8-btn-gif" onclick="toggleGif()">
+      <img id="p8-gif-btn-img" src="btn/8/btn_gif.png" alt="">
     </div>
     <!-- Square handwriting canvas -->
     <div id="p8-canvas-wrap">
@@ -459,15 +620,15 @@
     <div id="p8-btn-clear"    class="p8-action-btn" onclick="clearCanvas()"><img src="btn/8/btn_clear.png" alt="清除"></div>
     <div id="p8-btn-complete" class="p8-action-btn" onclick="launchConfetti()"><img src="btn/8/btn_complete.png" alt="完成"></div>
     <div class="tab-panel">
-      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
-      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">識圖</button>
-      <button class="tab-btn tab-write tab-active">書寫練習</button>
-      <button class="tab-btn tab-picbook" onclick="goTo(9)">故事繪本</button>
-      <button class="tab-btn tab-game"    onclick="goTo(10)">遊戲活動</button>
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">❓課前提問</button>
+      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">👀識圖</button>
+      <button class="tab-btn tab-write tab-active">✏️書寫練習</button>
+      <button class="tab-btn tab-picbook" onclick="goTo(9)">📚故事繪本</button>
+      <button class="tab-btn tab-game"    onclick="goTo(10)">🎮遊戲活動</button>
     </div>
   </div>
 
-  <!-- PAGE 9 – 故事繪本 -->
+  <!-- PAGE 9 – 📚故事繪本 -->
   <div id="page9" class="page">
     <img class="bg" src="page_BG/BG_9.png" alt="">
     <div class="nav-btn nav-tl" onclick="goTo(5)">
@@ -478,19 +639,61 @@
     </div>
     <div class="nav-btn nav-bl"><img src="btn/btn_all/btn_preview_str_green.png" alt=""></div>
     <div class="nav-btn nav-br"><img src="btn/btn_all/btn_next_str_green.png" alt=""></div>
-    <div class="picbook-card" id="pb1"><img src="btn/9/card_body.png"  alt=""></div>
-    <div class="picbook-card" id="pb2"><img src="btn/9/card_eye.png"   alt=""></div>
-    <div class="picbook-card" id="pb3"><img src="btn/9/card_hands.png" alt=""></div>
+    <div class="picbook-card" id="pb1" onclick="goTo('9-1')"><img src="btn/9/card_1hand.png"  alt=""></div>
+    <div class="picbook-card" id="pb2" onclick="goTo('9-2')"><img src="btn/9/card_2body.png"  alt=""></div>
+    <div class="picbook-card" id="pb3" onclick="goTo('9-3')"><img src="btn/9/card_3eye.png"   alt=""></div>
     <div class="tab-panel">
-      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
-      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">識圖</button>
-      <button class="tab-btn tab-write"        onclick="goTo(8)">書寫練習</button>
-      <button class="tab-btn tab-picbook tab-active">故事繪本</button>
-      <button class="tab-btn tab-game" onclick="goTo(10)">遊戲活動</button>
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">❓課前提問</button>
+      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">👀識圖</button>
+      <button class="tab-btn tab-write"        onclick="goTo(8)">✏️書寫練習</button>
+      <button class="tab-btn tab-picbook tab-active">📚故事繪本</button>
+      <button class="tab-btn tab-game" onclick="goTo(10)">🎮遊戲活動</button>
     </div>
   </div>
 
-  <!-- PAGE 10 – 遊戲活動 (matching) -->
+  <!-- PAGE 9-1 – Story sub-page 1 -->
+  <div id="page-9-1" class="page">
+    <img class="bg" src="page_BG/9_1.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(9)">
+      <img src="btn/btn_all/btn_preview_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl" onclick="goTo('9-3')"><img src="btn/btn_all/btn_preview_str_green.png" alt=""></div>
+    <div class="nav-btn nav-br" onclick="goTo('9-2')"><img src="btn/btn_all/btn_next_str_green.png" alt=""></div>
+    <img class="p9sub-img" src="image/9/image_9_1.png" alt="">
+  </div>
+
+  <!-- PAGE 9-2 – Story sub-page 2 -->
+  <div id="page-9-2" class="page">
+    <img class="bg" src="page_BG/9_2.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(9)">
+      <img src="btn/btn_all/btn_preview_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl" onclick="goTo('9-1')"><img src="btn/btn_all/btn_preview_str_green.png" alt=""></div>
+    <div class="nav-btn nav-br" onclick="goTo('9-3')"><img src="btn/btn_all/btn_next_str_green.png" alt=""></div>
+    <img class="p9sub-img" src="image/9/image_9_2.png" alt="">
+  </div>
+
+  <!-- PAGE 9-3 – Story sub-page 3 -->
+  <div id="page-9-3" class="page">
+    <img class="bg" src="page_BG/9_3.png" alt="">
+    <div class="nav-btn nav-tl" onclick="goTo(9)">
+      <img src="btn/btn_all/btn_preview_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-tr" onclick="goTo(1)">
+      <img src="btn/btn_all/btn_hua_green.png" alt="">
+    </div>
+    <div class="nav-btn nav-bl" onclick="goTo('9-2')"><img src="btn/btn_all/btn_preview_str_green.png" alt=""></div>
+    <div class="nav-btn nav-br" onclick="goTo('9-1')"><img src="btn/btn_all/btn_next_str_green.png" alt=""></div>
+    <img class="p9sub-img" src="image/9/image_9_3.png" alt="">
+  </div>
+
+  <!-- PAGE 10 – 🎮遊戲活動 (matching) -->
   <div id="page10" class="page">
     <img class="bg" src="page_BG/BG_10.png" alt="">
     <div class="nav-btn nav-tl" onclick="goTo(5)">
@@ -512,11 +715,11 @@
     <div class="match-item" id="mr-eye"   onclick="selectRight(this,'eye')"><img   id="mr-eye-img"   src="btn/10/text_eye.png"   alt="眼睛"></div>
     <svg id="match-svg" xmlns="http://www.w3.org/2000/svg"></svg>
     <div class="tab-panel">
-      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">課前提問</button>
-      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">識圖</button>
-      <button class="tab-btn tab-write"        onclick="goTo(8)">書寫練習</button>
-      <button class="tab-btn tab-picbook"      onclick="goTo(9)">故事繪本</button>
-      <button class="tab-btn tab-game tab-active">遊戲活動</button>
+      <button class="tab-btn tab-menuquestion" onclick="goTo(6)">❓課前提問</button>
+      <button class="tab-btn tab-knowimage"    onclick="goTo(7)">👀識圖</button>
+      <button class="tab-btn tab-write"        onclick="goTo(8)">✏️書寫練習</button>
+      <button class="tab-btn tab-picbook"      onclick="goTo(9)">📚故事繪本</button>
+      <button class="tab-btn tab-game tab-active">🎮遊戲活動</button>
     </div>
   </div>
 
@@ -537,6 +740,8 @@ function goTo(n) {
   document.getElementById(id).classList.add('active');
   if (n === 10) resetMatching();
   if (n === 8)  initCanvasOnce();
+  else          dismissGif();
+  if (n !== '6b') resetP6bAnswer();
 }
 
 // ── Shake ─────────────────────────────────────────────────
@@ -636,12 +841,62 @@ function playSound(src) {
   new Audio(src).play();
 }
 
+// ── Page 6b – Body annotation ─────────────────────────────
+const _p6bEllipses = {
+  '眉毛': [{ cx: 50, cy: 28, rx: 26, ry: 4   }],
+  '眼睛': [{ cx: 36, cy: 36, rx: 9,  ry: 6   }, { cx: 64, cy: 36, rx: 9,  ry: 6   }],
+  '鼻子': [{ cx: 50, cy: 48, rx: 10, ry: 11  }],
+  '耳朵': [{ cx: 18, cy: 42, rx: 7,  ry: 10  }, { cx: 80, cy: 42, rx: 7,  ry: 10  }],
+  '嘴巴': [{ cx: 50, cy: 60, rx: 15, ry: 5   }],
+};
+let _p6bPart = '眉毛';
+let _p6bAnswerShown = false;
+
+function selectP6bPart(part, el) {
+  _p6bPart = part;
+  _p6bAnswerShown = false;
+  document.querySelectorAll('.p6b-part-btn').forEach(b => b.classList.remove('p6b-active'));
+  el.classList.add('p6b-active');
+  document.getElementById('p6b-title').textContent = part + '在那裡？';
+  document.getElementById('p6b-answer-img').src = 'btn/6/btn_answer.png';
+  document.getElementById('p6b-svg').innerHTML = '';
+}
+
+function toggleP6bAnswer() {
+  _p6bAnswerShown = !_p6bAnswerShown;
+  document.getElementById('p6b-answer-img').src = _p6bAnswerShown
+    ? 'btn/6/btn_answer_active.png' : 'btn/6/btn_answer.png';
+  const svg = document.getElementById('p6b-svg');
+  svg.innerHTML = '';
+  if (_p6bAnswerShown) {
+    (_p6bEllipses[_p6bPart] || []).forEach(e => {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      el.setAttribute('cx', e.cx); el.setAttribute('cy', e.cy);
+      el.setAttribute('rx', e.rx); el.setAttribute('ry', e.ry);
+      el.setAttribute('fill', 'none');
+      el.setAttribute('stroke', '#E95F9D');
+      el.setAttribute('stroke-width', '5');
+      el.setAttribute('vector-effect', 'non-scaling-stroke');
+      svg.appendChild(el);
+    });
+  }
+}
+
+function resetP6bAnswer() {
+  _p6bAnswerShown = false;
+  const svg = document.getElementById('p6b-svg');
+  if (svg) svg.innerHTML = '';
+  const img = document.getElementById('p6b-answer-img');
+  if (img) img.src = 'btn/6/btn_answer.png';
+}
+
 // ── Page 8 – Char selector ────────────────────────────────
 const _charKeys = ['head','ear','foot','nose','eye','mouth','hand'];
 const _charChars = { head:'頭', ear:'耳', foot:'腳', nose:'鼻', eye:'眼', mouth:'口', hand:'手' };
 
 function selectChar(id, el) {
-  clearCanvas();  // clear drawing when switching character
+  clearCanvas();
+  dismissGif();
   _charKeys.forEach(c => {
     const btn = document.getElementById('cbtn-' + c);
     if (btn) btn.classList.toggle('pressed', c === id);
@@ -710,6 +965,29 @@ function clearCanvas() {
   if (!canvas) return;
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
+
+// ── Page 8 – GIF overlay ──────────────────────────────────
+let _gifVisible = false;
+function toggleGif() {
+  _gifVisible = !_gifVisible;
+  document.getElementById('p8-gif-overlay').style.display = _gifVisible ? 'block' : 'none';
+  document.getElementById('p8-gif-btn-img').src = _gifVisible
+    ? 'btn/8/btn_gif_active.png' : 'btn/8/btn_gif.png';
+}
+function dismissGif() {
+  if (!_gifVisible) return;
+  _gifVisible = false;
+  const overlay = document.getElementById('p8-gif-overlay');
+  if (overlay) overlay.style.display = 'none';
+  const btnImg = document.getElementById('p8-gif-btn-img');
+  if (btnImg) btnImg.src = 'btn/8/btn_gif.png';
+}
+document.addEventListener('click', function(e) {
+  if (!_gifVisible) return;
+  if (!e.target.closest('#p8-text-frame') && !e.target.closest('#p8-btn-gif')) {
+    dismissGif();
+  }
+});
 
 // ── Page 10 – Matching ────────────────────────────────────
 let _selLeft = null;
